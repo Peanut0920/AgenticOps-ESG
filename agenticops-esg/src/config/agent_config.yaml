@@ -1,0 +1,55 @@
+# ========================================================================
+# AgenticOps-ESG Agent Configuration
+# ========================================================================
+# This file controls the behavior of all 7 autonomous agents.
+# Modify these values to tune performance, risk tolerance, and scheduling.
+# ========================================================================
+
+# ------------------------------------------------------------------------
+# Pareto Optimization Weights (Multi-Objective Scoring)
+# ------------------------------------------------------------------------
+# These weights determine how the Optimize Agent scores each proposed action.
+# Higher weight = more importance in the utility score.
+# Sum of weights does not need to equal 1, but they are normalized internally.
+pareto_weights:
+  performance: 0.40    # How much we care about maintaining/increasing performance
+  carbon: 0.35         # How much we care about carbon savings
+  risk: 0.25           # How much we care about avoiding operational risk
+
+# ------------------------------------------------------------------------
+# Thresholds for Triggering Actions
+# ------------------------------------------------------------------------
+# Agents use these thresholds to decide when to generate proposals.
+thresholds:
+  cpu_underutilization_pct: 40.0   # VMs with CPU below this % are candidates for downsizing
+  ram_underutilization_pct: 50.0   # VMs with RAM below this % are candidates for downsizing
+  risk_max_pct: 15.0               # Max acceptable risk score (0-100) for a resize. Exceeding this flags compliance violation.
+  drive_fail_threshold: 0.7        # SMART drive fail probability above this triggers refresh analysis.
+  pue_target: 1.4                 # Target Power Usage Effectiveness (PUE) for reporting.
+  min_carbon_saving_kg: 0.5       # Minimum carbon saving (kg) to consider an action worthwhile.
+
+# ------------------------------------------------------------------------
+# Execution Schedules (in seconds / hours / days)
+# ------------------------------------------------------------------------
+# Determines how often each agent runs. In production, a scheduler (e.g., APScheduler)
+# would use these values to trigger the orchestrator.
+schedules:
+  telemetry_interval_seconds: 300   # Scrape metrics every 5 minutes
+  rightsizing_interval_hours: 6     # Re-evaluate VM sizes every 6 hours
+  refresh_interval_hours: 24        # Check hardware degradation daily
+  reporting_interval_days: 7        # Generate ESG reports weekly
+
+# ------------------------------------------------------------------------
+# Global Execution Limits
+# ------------------------------------------------------------------------
+max_actions_per_cycle: 5            # Maximum number of actions to propose per workflow (prevents thrashing)
+
+# ------------------------------------------------------------------------
+# Auto-Approval (Bypass Human-in-the-Loop)
+# ------------------------------------------------------------------------
+# List of action types that can be automatically approved without human intervention.
+# Leave empty [] to require approval for all actions.
+# WARNING: Auto-approving refreshes may incur significant capex!
+auto_approve_allowed_actions:
+  # - "resize"      # Uncomment to auto-approve resizes (low risk)
+  # - "partial_repair"  # Uncomment to auto-approve repairs (low cost)

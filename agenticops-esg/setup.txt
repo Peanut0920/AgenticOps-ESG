@@ -1,0 +1,79 @@
+###############################################################################
+# SETUP.TXT - AgenticOps-ESG Environment Configuration
+# Version: 1.0.0
+# Date: 2026-08-13
+###############################################################################
+
+# ============================================================
+# ⚡ QUICK START – Copy‑Paste these commands after cloning
+# ============================================================
+#
+# 1. One‑time setup (run in project root):
+#    python3 -m venv venv && source venv/bin/activate && pip install -r requirements.txt && python initialization.py --setup-db
+#
+# 2. Launch Backend (in Terminal 1):
+#    source venv/bin/activate && uvicorn backend_api.main:app --host 0.0.0.0 --port 8000 --reload
+#
+# 3. Launch Frontend (in Terminal 2):
+#    cd frontend && python3 -m http.server 5500
+#
+# 4. Open your browser: http://localhost:5500
+#
+# ============================================================
+
+# ---------------------------------------------------------------------------
+# FULL DETAILED SETUP (step‑by‑step)
+# ---------------------------------------------------------------------------
+
+# 1. Prerequisites
+# - Python 3.10 or higher (python3 --version)
+# - Git (optional)
+# - A modern browser
+
+# 2. Clone the repository
+git clone https://github.com/your-org/agenticops-esg.git
+cd agenticops-esg
+
+# 3. Create and activate a Python virtual environment
+python3 -m venv venv
+source venv/bin/activate      # On Windows: .venv\Scripts\activate
+
+# 4. Install all dependencies
+pip install --upgrade pip
+pip install -r requirements.txt
+
+# 5. (Optional) Copy .env file – mocks work without it
+cp .env.example .env
+
+# 6. Run the initialization script (creates folders & seeds RAG)
+python initialization.py --setup-db
+
+# 7. Start the backend (Terminal 1)
+uvicorn backend_api.main:app --host 0.0.0.0 --port 8000 --reload
+
+# 8. Serve the frontend (Terminal 2)
+cd frontend
+python3 -m http.server 5500
+
+# 9. Open http://localhost:5500 in your browser
+
+# ---------------------------------------------------------------------------
+# TROUBLESHOOTING
+# ---------------------------------------------------------------------------
+# - Port 8000 already in use?   →  uvicorn ... --port 8001
+# - Frontend can't reach API?   →  Check API_BASE in frontend/script.js
+# - RAG seeding fails?          →  The mock works even without PDFs
+# - Missing .env?               →  Fallback to default mock values
+# ---------------------------------------------------------------------------
+
+
+If you prefer to run everything manually in two terminals, here is the exact copy‑paste sequence:
+Terminal 1 – Backend:
+source venv/bin/activate && uvicorn backend_api.main:app --host 0.0.0.0 --port 8000 --reload
+
+Terminal 2 – Frontend:
+cd frontend && python3 -m http.server 5500
+
+Browser:
+http://localhost:5500
+

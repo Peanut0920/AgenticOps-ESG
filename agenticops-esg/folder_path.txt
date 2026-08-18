@@ -1,0 +1,50 @@
+agenticops-esg/
+├── src/
+│   ├── core/
+│   │   ├── __init__.py
+│   │   ├── base_agent.py
+│   │   └── state.py
+│   ├── agents/
+│   │   ├── __init__.py
+│   │   ├── telemetry_agent.py
+│   │   ├── rightsizing_agent.py
+│   │   ├── refresh_agent.py
+│   │   ├── compliance_agent.py
+│   │   ├── optimize_agent.py
+│   │   ├── execution_agent.py
+│   │   └── reporting_agent.py
+│   ├── orchestrator/
+│   │   ├── __init__.py
+│   │   └── main.py
+│   ├── utils/
+│   │   ├── __init__.py
+│   │   ├── db_connectors.py
+│   │   ├── ml_forecast.py  (might not have code but should exist)
+│   │   ├── api_clients.py
+│   │   └── logger.py
+│   └── config/
+│       ├── __init__.py
+│       ├── settings.py
+│       └── agent_config.yaml
+├── backend_api/
+│   ├── __init__.py
+│   ├── main.py
+│   └── dependencies.py
+├── frontend/
+│   ├── index.html
+│   ├── script.js
+│   └── style.css
+├── data/
+│   ├── rag_db/
+│   ├── telemetry_cache/
+│   └── regulatory_pdfs/
+├── tests/
+│   ├── __init__.py
+│   ├── test_agents.py
+│   └── test_orchestrator.py
+├── logs/
+├── .env.example
+├── initialization.py
+├── setup.txt
+├── requirements.txt
+└── README.md

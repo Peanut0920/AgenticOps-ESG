@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AgenticOps-ESG · Mission Control</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<aside class="sidebar fixed top-0 left-0 h-screen w-64 text-white p-5 flex flex-col shadow-2xl z-50">
+    <div class="flex items-center gap-3 mb-10">
+        <i class="fas fa-robot text-3xl text-yellow-400"></i>
+        <span class="text-xl font-bold tracking-tight logo-text">AgenticOps</span>
+        <span class="logo-badge">ESG</span>
+    </div>
+    <nav class="flex-1 space-y-1">
+        <a href="#" class="tab-link active-tab flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm transition" data-tab="dashboard">
+            <i class="fas fa-chart-pie w-5"></i> <span>Dashboard</span>
+        </a>
+        <a href="#" class="tab-link flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm text-gray-400 hover:bg-[#1f1f1f] transition" data-tab="telemetry">
+            <i class="fas fa-microchip w-5"></i> <span>Telemetry</span>
+        </a>
+        <a href="#" class="tab-link flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm text-gray-400 hover:bg-[#1f1f1f] transition" data-tab="actions">
+            <i class="fas fa-clock w-5"></i> <span>Approvals</span>
+            <span id="pending-badge" class="ml-auto bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">0</span>
+        </a>
+        <a href="#" class="tab-link flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm text-gray-400 hover:bg-[#1f1f1f] transition" data-tab="compliance">
+            <i class="fas fa-file-contract w-5"></i> <span>ESG Reports</span>
+        </a>
+        <a href="#" class="tab-link flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm text-gray-400 hover:bg-[#1f1f1f] transition" data-tab="audit">
+            <i class="fas fa-list-ul w-5"></i> <span>Audit Trail</span>
+        </a>
+    </nav>
+    <div class="text-xs text-gray-500 border-t border-gray-800 pt-4 mt-4">
+        <div class="flex items-center gap-2 mb-3">
+            <i class="fas fa-circle text-green-400 text-[8px]"></i>
+            <span>System Online</span>
+        </div>
+        <button onclick="triggerWorkflow()" class="btn-primary w-full text-xs font-medium py-2 rounded transition flex items-center justify-center gap-1">
+            <i class="fas fa-play"></i> Run Full Cycle
+        </button>
+        <button onclick="resetState()" class="btn-secondary w-full text-xs font-medium py-2 rounded transition mt-2 flex items-center justify-center gap-1">
+            <i class="fas fa-undo"></i> Reset State
+        </button>
+    </div>
+</aside>
+
+<main class="ml-64 p-8">
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h1 id="page-title" class="page-title text-2xl">Dashboard</h1>
+            <p class="page-subtitle">Live IT Sustainability & Compliance</p>
+        </div>
+        <div class="flex items-center gap-4">
+            <span class="header-date text-sm"><i class="far fa-calendar-alt mr-1"></i> <span id="current-date"></span></span>
+            <button onclick="refreshData()" class="btn-refresh"><i class="fas fa-sync-alt mr-1"></i> Refresh</button>
+        </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="tab-dashboard" class="tab-content">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="kpi-card accent-yellow">
+                <div class="kpi-label">Total Carbon Saved</div>
+                <div class="kpi-value"><span id="kpi-carbon">--</span> <span class="unit">kg CO2e</span></div>
+            </div>
+            <div class="kpi-card accent-red">
+                <div class="kpi-label">Pending Approvals</div>
+                <div class="kpi-value"><span id="kpi-pending">--</span> <span class="unit">actions</span></div>
+            </div>
+            <div class="kpi-card accent-white">
+                <div class="kpi-label">Current PUE</div>
+                <div class="kpi-value"><span id="kpi-pue">--</span></div>
+            </div>
+            <div class="kpi-card accent-red">
+                <div class="kpi-label">Compliance Flags</div>
+                <div class="kpi-value"><span id="kpi-violations">--</span></div>
+            </div>
+        </div>
+        <div class="card-dark">
+            <div class="card-title"><i class="fas fa-chart-line text-blue-400"></i> Power &amp; CPU Utilization (Top Hosts)</div>
+            <div class="relative w-full h-80"> <!-- h-80 = 320px -->
+                <canvas id="telemetryChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- TELEMETRY -->
+    <div id="tab-telemetry" class="tab-content hidden">
+        <div class="card-dark">
+            <div class="card-title"><i class="fas fa-chart-line text-blue-400"></i> Power &amp; CPU Utilization (Top Hosts)</div>
+            <canvas id="telemetryChart" height="300"></canvas>
+        </div>
+    </div>
+
+    <!-- APPROVALS -->
+    <div id="tab-actions" class="tab-content hidden">
+        <div class="card-dark">
+            <div class="card-title"><i class="fas fa-user-check text-yellow-400"></i> Human-in-the-Loop Approvals</div>
+            <div id="action-list" class="space-y-3">
+                <div class="text-gray-400 text-sm p-4 border border-dashed border-gray-700 rounded-lg text-center">No pending actions.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- COMPLIANCE (Structured Report) -->
+    <div id="tab-compliance" class="tab-content hidden">
+        <div id="structured-report" class="space-y-6">
+            <!-- Dynamically rendered by script.js -->
+            <div class="text-gray-400 text-center py-8">Loading structured report...</div>
+        </div>
+    </div>
+
+    <!-- AUDIT -->
+    <div id="tab-audit" class="tab-content hidden">
+        <div class="card-dark">
+            <div class="card-title"><i class="fas fa-history text-gray-400"></i> Audit Trail (Last 20 events)</div>
+            <div id="audit-log" class="audit-container">Loading audit log...</div>
+        </div>
+    </div>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
