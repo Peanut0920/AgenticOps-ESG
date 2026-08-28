@@ -1,8 +1,0 @@
-# Install pytest if not already installed
-pip install pytest pytest-mock
-
-# Run all tests from the project root
-pytest tests/ -v
-
-# Run with coverage (optional)
-pytest tests/ --cov=src --cov-report=html
